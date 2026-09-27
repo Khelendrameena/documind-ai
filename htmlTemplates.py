@@ -1,8 +1,12 @@
 css = """
 <style>
 
+/* =========================================================
+   GLOBAL
+========================================================= */
+
 .stApp {
-    background: #0f1117;
+    background-color: #0f1117;
 }
 
 #MainMenu {
@@ -17,188 +21,285 @@ header {
     background: transparent !important;
 }
 
-/* DOCUMIND HEADER */
+
+/* =========================================================
+   DOCUMIND HEADER
+========================================================= */
 
 .documind-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 0 20px 0;
-    border-bottom: 1px solid #262a33;
+
+    padding: 12px 0 18px 0;
+
+    border-bottom: 1px solid #272b35;
+
     margin-bottom: 20px;
 }
 
 .documind-logo {
     width: 42px;
     height: 42px;
+
     border-radius: 12px;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+
+    background: linear-gradient(
+        135deg,
+        #6366f1,
+        #8b5cf6
+    );
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     color: white;
+
     font-size: 22px;
     font-weight: 700;
+
+    box-shadow:
+        0 4px 20px
+        rgba(99, 102, 241, 0.25);
 }
 
 .documind-title {
+    color: #f8fafc;
+
     font-size: 22px;
     font-weight: 700;
-    color: #f8fafc;
+
+    line-height: 1.1;
 }
 
 .documind-subtitle {
-    font-size: 12px;
     color: #8b93a7;
-    margin-top: 3px;
+
+    font-size: 12px;
+
+    margin-top: 4px;
 }
 
-/* CHAT */
 
-.chat-message {
-    display: flex;
-    width: 100%;
-    padding: 18px 0;
-    margin-bottom: 4px;
-    gap: 14px;
-}
-
-.chat-message.user {
-    background: transparent;
-}
-
-.chat-message.bot {
-    background: #171a21;
-    border-radius: 12px;
-    padding: 18px 14px;
-}
-
-/* AVATAR */
-
-.chat-message .avatar {
-    width: 36px;
-    min-width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.bot-avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 9px;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 17px;
-    font-weight: 700;
-}
-
-.user-avatar {
-    width: 34px;
-    height: 34px;
-    border-radius: 9px;
-    background: #303642;
-    color: #e5e7eb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    font-weight: 600;
-}
-
-/* MESSAGE */
-
-.chat-message .message {
-    flex: 1;
-    color: #e5e7eb;
-    font-size: 15px;
-    line-height: 1.65;
-    padding: 5px 8px 0 2px;
-    overflow-wrap: anywhere;
-}
-
-.chat-message .message p {
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-
-.chat-message .message strong {
-    color: #ffffff;
-}
-
-.chat-message .message code {
-    background: #252936;
-    padding: 2px 6px;
-    border-radius: 5px;
-}
-
-/* WELCOME */
+/* =========================================================
+   WELCOME SCREEN
+========================================================= */
 
 .welcome {
     text-align: center;
-    padding: 70px 20px 30px 20px;
+
+    padding-top: 90px;
+    padding-bottom: 40px;
 }
 
 .welcome-icon {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
+
     margin: auto;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+
+    border-radius: 17px;
+
+    background: linear-gradient(
+        135deg,
+        #6366f1,
+        #8b5cf6
+    );
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     color: white;
-    font-size: 28px;
+
+    font-size: 30px;
     font-weight: 700;
+
+    box-shadow:
+        0 8px 30px
+        rgba(99, 102, 241, 0.25);
 }
 
 .welcome h1 {
     color: #f8fafc;
-    font-size: 30px;
-    margin-top: 18px;
+
+    font-size: 28px;
+
+    margin-top: 20px;
     margin-bottom: 8px;
 }
 
 .welcome p {
     color: #8b93a7;
+
     font-size: 14px;
 }
 
-/* INPUT */
 
-.stChatInput textarea {
-    background: #1b1f27 !important;
+/* =========================================================
+   CHAT
+========================================================= */
+
+[data-testid="stChatMessage"] {
+
+    border-radius: 12px;
+
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+
+/* Assistant message */
+
+[data-testid="stChatMessage"]:has(
+    [data-testid="chatAvatarIcon-assistant"]
+) {
+
+    background-color: #171a21;
+}
+
+
+/* Message text */
+
+[data-testid="stChatMessageContent"] {
+
+    color: #e5e7eb;
+
+    font-size: 15px;
+
+    line-height: 1.65;
+}
+
+
+/* Bold text */
+
+[data-testid="stChatMessageContent"] strong {
+
+    color: #ffffff;
+}
+
+
+/* Code */
+
+[data-testid="stChatMessageContent"] code {
+
+    background-color: #252936;
+
+    border-radius: 5px;
+
+    padding: 2px 6px;
+}
+
+
+/* =========================================================
+   CHAT INPUT
+========================================================= */
+
+[data-testid="stChatInput"] {
+
+    background-color: transparent;
+}
+
+[data-testid="stChatInput"] textarea {
+
+    background-color: #1b1f27 !important;
+
     color: #f8fafc !important;
+
     border: 1px solid #303642 !important;
+
     border-radius: 14px !important;
 }
 
-.stChatInput textarea:focus {
+[data-testid="stChatInput"] textarea:focus {
+
     border-color: #6366f1 !important;
-    box-shadow: 0 0 0 1px #6366f1 !important;
+
+    box-shadow:
+        0 0 0 1px #6366f1 !important;
 }
 
-/* SCROLLBAR */
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+[data-testid="stSidebar"] {
+
+    background-color: #11141a;
+}
+
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+
+    color: #f8fafc;
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.stButton > button {
+
+    border-radius: 10px;
+
+    border: 1px solid #303642;
+
+    background-color: #1b1f27;
+
+    color: #f8fafc;
+}
+
+.stButton > button:hover {
+
+    border-color: #6366f1;
+
+    color: white;
+}
+
+
+/* =========================================================
+   FILE UPLOADER
+========================================================= */
+
+[data-testid="stFileUploader"] {
+
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
 
 ::-webkit-scrollbar {
+
     width: 7px;
 }
 
 ::-webkit-scrollbar-track {
+
     background: #0f1117;
 }
 
 ::-webkit-scrollbar-thumb {
+
     background: #303642;
+
     border-radius: 10px;
 }
 
-/* MOBILE */
+::-webkit-scrollbar-thumb:hover {
+
+    background: #454c5c;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 700px) {
 
@@ -206,45 +307,19 @@ header {
         font-size: 20px;
     }
 
-    .chat-message {
-        padding: 14px 0;
+    .welcome {
+        padding-top: 50px;
     }
 
-    .chat-message.bot {
-        padding: 15px 10px;
+    .welcome h1 {
+        font-size: 23px;
     }
 
-    .chat-message .message {
+    [data-testid="stChatMessageContent"] {
         font-size: 14px;
     }
 
 }
 
 </style>
-"""
-
-
-bot_template = """
-<div class="chat-message bot">
-    <div class="avatar">
-        <div class="bot-avatar">D</div>
-    </div>
-
-    <div class="message">
-        {{MSG}}
-    </div>
-</div>
-"""
-
-
-user_template = """
-<div class="chat-message user">
-    <div class="avatar">
-        <div class="user-avatar">U</div>
-    </div>
-
-    <div class="message">
-        {{MSG}}
-    </div>
-</div>
 """
