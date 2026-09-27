@@ -17,7 +17,7 @@ from htmlTemplates import css
 
 
 # ============================================================
-# PAGE CONFIG
+# CONFIG
 # ============================================================
 
 st.set_page_config(
@@ -74,31 +74,31 @@ def get_text_chunks(text):
         length_function=len
     )
 
-    chunks = text_splitter.split_text(text)
-
-    return chunks
+    return text_splitter.split_text(text)
 
 
 # ============================================================
-# VECTOR DATABASE
+# EMBEDDINGS
 # ============================================================
 
-@st.cache_resource(show_spinner=False)
+@st.cache_resource
 def create_embeddings():
 
-    embeddings = HuggingFaceEmbeddings(
+    return HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 
-    return embeddings
 
+# ============================================================
+# VECTOR STORE
+# ============================================================
 
 def get_vectorstore(text_chunks):
 
     embeddings = create_embeddings()
 
     vectorstore = FAISS.from_texts(
-        texts=text_chunks,
+        text_chunks,
         embedding=embeddings
     )
 
@@ -106,10 +106,10 @@ def get_vectorstore(text_chunks):
 
 
 # ============================================================
-# LLM + CONVERSATION CHAIN
+# LLM
 # ============================================================
 
-@st.cache_resource(show_spinner=False)
+@st.cache_resource
 def create_llm():
 
     hf_pipeline = pipeline(
@@ -119,12 +119,14 @@ def create_llm():
         temperature=0.2
     )
 
-    llm = HuggingFacePipeline(
+    return HuggingFacePipeline(
         pipeline=hf_pipeline
     )
 
-    return llm
 
+# ============================================================
+# CONVERSATION CHAIN
+# ============================================================
 
 def get_conversation_chain(vectorstore):
 
@@ -139,9 +141,7 @@ def get_conversation_chain(vectorstore):
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         retriever=vectorstore.as_retriever(
-            search_kwargs={
-                "k": 3
-            }
+            search_kwargs={"k": 3}
         ),
         memory=memory,
         return_source_documents=False
@@ -151,29 +151,20 @@ def get_conversation_chain(vectorstore):
 
 
 # ============================================================
-# ASK QUESTION
+# CHAT RESPONSE
 # ============================================================
 
 def handle_userinput(user_question):
 
-    # --------------------------------
-    # User message
-    # --------------------------------
+    # Save user message
+    st.session_state.messages.append({
+        "role": "user",
+        "content": user_question
+    })
 
-    st.session_state.messages.append(
-        {
-            "role": "user",
-            "content": user_question
-        }
-    )
+    try:
 
-    # --------------------------------
-    # Get AI response
-    # --------------------------------
-
-    with st.spinner("Thinking..."):
-
-        try:
+        with st.spinner("Thinking..."):
 
             response = st.session_state.conversation.invoke(
                 {
@@ -181,28 +172,24 @@ def handle_userinput(user_question):
                 }
             )
 
-            answer = response.get(
-                "answer",
-                "I couldn't find an answer in the document."
-            )
+        answer = response.get(
+            "answer",
+            "I couldn't find an answer in the document."
+        )
 
-        except Exception as e:
+    except Exception as e:
 
-            answer = (
-                "Sorry, I encountered an error while "
-                f"processing your question.\n\n`{str(e)}`"
-            )
+        answer = (
+            "Sorry, something went wrong while "
+            "processing your question.\n\n"
+            f"Error: `{str(e)}`"
+        )
 
-    # --------------------------------
-    # Save AI response
-    # --------------------------------
-
-    st.session_state.messages.append(
-        {
-            "role": "assistant",
-            "content": answer
-        }
-    )
+    # Save assistant response
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": answer
+    })
 
 
 # ============================================================
@@ -227,7 +214,7 @@ def render_chat():
 
             with st.chat_message(
                 "assistant",
-                avatar="D"
+                avatar="📄"
             ):
                 st.markdown(
                     message["content"]
@@ -242,18 +229,18 @@ def main():
 
     load_dotenv()
 
-    # --------------------------------
-    # Load CSS
-    # --------------------------------
+    # --------------------------------------------------------
+    # CSS
+    # --------------------------------------------------------
 
     st.markdown(
         css,
         unsafe_allow_html=True
     )
 
-    # --------------------------------
-    # Session State
-    # --------------------------------
+    # --------------------------------------------------------
+    # SESSION STATE
+    # --------------------------------------------------------
 
     if "conversation" not in st.session_state:
         st.session_state.conversation = None
@@ -264,46 +251,55 @@ def main():
     if "documents_processed" not in st.session_state:
         st.session_state.documents_processed = False
 
-    # --------------------------------
-    # Header
-    # --------------------------------
+    # --------------------------------------------------------
+    # HEADER
+    # --------------------------------------------------------
 
-    st.markdown(
-        """
-        <div class="documind-header">
+    # IMPORTANT:
+    # No custom HTML here.
+    # This avoids raw HTML rendering problems.
 
-            <div class="documind-logo">
-                D
-            </div>
-
-            <div>
-                <div class="documind-title">
-                    DocuMind
-                </div>
-
-                <div class="documind-subtitle">
-                    AI Document Assistant
-                </div>
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
+    col1, col2 = st.columns(
+        [0.12, 0.88],
+        vertical_alignment="center"
     )
 
-    # --------------------------------
-    # Sidebar
-    # --------------------------------
-
-    with st.sidebar:
+    with col1:
 
         st.markdown(
-            "## 📂 Documents"
+            """
+            <div class="logo-box">
+                D
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col2:
+
+        st.markdown(
+            '<div class="app-title">DocuMind</div>',
+            unsafe_allow_html=True
         )
 
         st.markdown(
-            "Upload one or more PDF documents "
-            "to start chatting with them."
+            '<div class="app-subtitle">AI Document Assistant</div>',
+            unsafe_allow_html=True
+        )
+
+    st.divider()
+
+    # --------------------------------------------------------
+    # SIDEBAR
+    # --------------------------------------------------------
+
+    with st.sidebar:
+
+        st.title("📂 Documents")
+
+        st.caption(
+            "Upload PDF files and ask questions "
+            "about their content."
         )
 
         pdf_docs = st.file_uploader(
@@ -329,8 +325,12 @@ def main():
 
             else:
 
+                # --------------------------------------------
+                # Extract
+                # --------------------------------------------
+
                 with st.spinner(
-                    "Reading your documents..."
+                    "Reading documents..."
                 ):
 
                     raw_text = get_pdf_text(
@@ -340,90 +340,102 @@ def main():
                 if not raw_text.strip():
 
                     st.error(
-                        "❌ No readable text was found "
+                        "No readable text was found "
                         "in the uploaded PDF."
                     )
 
                 else:
 
+                    # ----------------------------------------
+                    # Chunks
+                    # ----------------------------------------
+
                     with st.spinner(
-                        "Creating document embeddings..."
+                        "Splitting document..."
                     ):
 
                         text_chunks = get_text_chunks(
                             raw_text
                         )
 
-                        if not text_chunks:
+                    if not text_chunks:
 
-                            st.error(
-                                "Could not create text chunks."
-                            )
+                        st.error(
+                            "Could not create text chunks."
+                        )
 
-                        else:
+                    else:
+
+                        # ------------------------------------
+                        # Vector database
+                        # ------------------------------------
+
+                        with st.spinner(
+                            "Creating embeddings..."
+                        ):
 
                             vectorstore = get_vectorstore(
                                 text_chunks
                             )
 
-                    with st.spinner(
-                        "Loading AI model..."
-                    ):
+                        # ------------------------------------
+                        # Conversation chain
+                        # ------------------------------------
 
-                        st.session_state.conversation = (
-                            get_conversation_chain(
-                                vectorstore
+                        with st.spinner(
+                            "Loading AI model..."
+                        ):
+
+                            st.session_state.conversation = (
+                                get_conversation_chain(
+                                    vectorstore
+                                )
                             )
+
+                        # Clear old conversation
+                        st.session_state.messages = []
+
+                        st.session_state.documents_processed = True
+
+                        st.success(
+                            "✅ Documents processed!"
                         )
 
-                    st.session_state.messages = []
-
-                    st.session_state.documents_processed = True
-
-                    st.success(
-                        "✅ Documents processed successfully!"
-                    )
-
-                    st.info(
-                        f"Created {len(text_chunks)} "
-                        "text chunks."
-                    )
-
-        # --------------------------------
-        # Status
-        # --------------------------------
+                        st.caption(
+                            f"{len(text_chunks)} text chunks created."
+                        )
 
         st.divider()
 
         if st.session_state.documents_processed:
 
             st.success(
-                "🟢 Document assistant ready"
+                "🟢 DocuMind is ready"
             )
 
         else:
 
             st.info(
-                "⚪ Upload and process a PDF to begin."
+                "Upload and process a PDF first."
             )
 
-    # --------------------------------
-    # Welcome screen
-    # --------------------------------
+    # --------------------------------------------------------
+    # WELCOME
+    # --------------------------------------------------------
 
     if not st.session_state.messages:
 
         st.markdown(
             """
-            <div class="welcome">
+            <div class="welcome-box">
 
                 <div class="welcome-icon">
-                    D
+                    📄
                 </div>
 
-                <h1>
-                    How can I help with your document?
-                </h1>
+                <h2>
+                    Chat with your documents
+                </h2>
 
                 <p>
                     Upload a PDF and ask questions
@@ -435,15 +447,15 @@ def main():
             unsafe_allow_html=True
         )
 
-    # --------------------------------
-    # Existing Chat
-    # --------------------------------
+    # --------------------------------------------------------
+    # CHAT HISTORY
+    # --------------------------------------------------------
 
     render_chat()
 
-    # --------------------------------
-    # Chat Input
-    # --------------------------------
+    # --------------------------------------------------------
+    # CHAT INPUT
+    # --------------------------------------------------------
 
     user_question = st.chat_input(
         "Ask something about your document..."
@@ -455,7 +467,7 @@ def main():
 
             st.warning(
                 "⚠️ Please upload and process "
-                "your PDF first."
+                "a PDF first."
             )
 
         else:
@@ -464,8 +476,6 @@ def main():
                 user_question
             )
 
-            # Rerun so the new messages
-            # are rendered immediately
             st.rerun()
 
 
