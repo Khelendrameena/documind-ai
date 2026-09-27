@@ -1,16 +1,10 @@
-```python
 css = """
 <style>
-
-/* =========================
-   MAIN APP
-========================= */
 
 .stApp {
     background: #0f1117;
 }
 
-/* Hide default Streamlit decoration */
 #MainMenu {
     visibility: hidden;
 }
@@ -23,9 +17,7 @@ header {
     background: transparent !important;
 }
 
-/* =========================
-   DOCUMIND HEADER
-========================= */
+/* DOCUMIND HEADER */
 
 .documind-header {
     display: flex;
@@ -47,14 +39,12 @@ header {
     color: white;
     font-size: 22px;
     font-weight: 700;
-    box-shadow: 0 4px 18px rgba(99, 102, 241, 0.25);
 }
 
 .documind-title {
     font-size: 22px;
     font-weight: 700;
     color: #f8fafc;
-    line-height: 1.1;
 }
 
 .documind-subtitle {
@@ -63,19 +53,7 @@ header {
     margin-top: 3px;
 }
 
-/* =========================
-   CHAT CONTAINER
-========================= */
-
-.chat-container {
-    width: 100%;
-    max-width: 900px;
-    margin: auto;
-}
-
-/* =========================
-   CHAT MESSAGE
-========================= */
+/* CHAT */
 
 .chat-message {
     display: flex;
@@ -85,13 +63,9 @@ header {
     gap: 14px;
 }
 
-/* User message */
-
 .chat-message.user {
     background: transparent;
 }
-
-/* Bot message */
 
 .chat-message.bot {
     background: #171a21;
@@ -99,9 +73,7 @@ header {
     padding: 18px 14px;
 }
 
-/* =========================
-   AVATAR
-========================= */
+/* AVATAR */
 
 .chat-message .avatar {
     width: 36px;
@@ -111,19 +83,6 @@ header {
     align-items: center;
     justify-content: center;
 }
-
-/* Avatar image */
-
-.chat-message .avatar img {
-    width: 34px;
-    height: 34px;
-    border-radius: 9px;
-    object-fit: cover;
-}
-
-/* =========================
-   DEFAULT ICON AVATARS
-========================= */
 
 .bot-avatar {
     width: 34px;
@@ -151,9 +110,7 @@ header {
     font-weight: 600;
 }
 
-/* =========================
-   MESSAGE TEXT
-========================= */
+/* MESSAGE */
 
 .chat-message .message {
     flex: 1;
@@ -164,15 +121,9 @@ header {
     overflow-wrap: anywhere;
 }
 
-/* Markdown-like text */
-
 .chat-message .message p {
     margin-top: 0;
     margin-bottom: 10px;
-}
-
-.chat-message .message p:last-child {
-    margin-bottom: 0;
 }
 
 .chat-message .message strong {
@@ -185,23 +136,7 @@ header {
     border-radius: 5px;
 }
 
-/* =========================
-   DOCUMENT STATUS
-========================= */
-
-.document-status {
-    background: #171a21;
-    border: 1px solid #292e39;
-    border-radius: 10px;
-    padding: 12px 15px;
-    color: #aeb6c6;
-    font-size: 13px;
-    margin-bottom: 15px;
-}
-
-/* =========================
-   WELCOME MESSAGE
-========================= */
+/* WELCOME */
 
 .welcome {
     text-align: center;
@@ -234,13 +169,7 @@ header {
     font-size: 14px;
 }
 
-/* =========================
-   INPUT AREA
-========================= */
-
-.stChatInput {
-    padding-bottom: 15px;
-}
+/* INPUT */
 
 .stChatInput textarea {
     background: #1b1f27 !important;
@@ -254,9 +183,7 @@ header {
     box-shadow: 0 0 0 1px #6366f1 !important;
 }
 
-/* =========================
-   SCROLLBAR
-========================= */
+/* SCROLLBAR */
 
 ::-webkit-scrollbar {
     width: 7px;
@@ -271,13 +198,7 @@ header {
     border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #454c5c;
-}
-
-/* =========================
-   MOBILE
-========================= */
+/* MOBILE */
 
 @media (max-width: 700px) {
 
@@ -297,10 +218,6 @@ header {
         font-size: 14px;
     }
 
-    .welcome {
-        padding-top: 45px;
-    }
-
 }
 
 </style>
@@ -309,7 +226,6 @@ header {
 
 bot_template = """
 <div class="chat-message bot">
-
     <div class="avatar">
         <div class="bot-avatar">D</div>
     </div>
@@ -317,14 +233,12 @@ bot_template = """
     <div class="message">
         {{MSG}}
     </div>
-
 </div>
 """
 
 
 user_template = """
 <div class="chat-message user">
-
     <div class="avatar">
         <div class="user-avatar">U</div>
     </div>
@@ -332,63 +246,5 @@ user_template = """
     <div class="message">
         {{MSG}}
     </div>
-
 </div>
 """
-```
-
-Phir CSS load karne ke liye:
-
-```python
-st.markdown(css, unsafe_allow_html=True)
-```
-
-Aur **header** add karo:
-
-```python
-st.markdown(
-    """
-    <div class="documind-header">
-
-        <div class="documind-logo">
-            D
-        </div>
-
-        <div>
-            <div class="documind-title">
-                DocuMind
-            </div>
-
-            <div class="documind-subtitle">
-                AI Document Assistant
-            </div>
-        </div>
-
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-```
-
-Welcome screen ke liye:
-
-```python
-st.markdown(
-    """
-    <div class="welcome">
-
-        <div class="welcome-icon">
-            D
-        </div>
-
-        <h1>How can I help with your document?</h1>
-
-        <p>
-            Upload a document and ask questions about its content.
-        </p>
-
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-```
